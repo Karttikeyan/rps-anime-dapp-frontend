@@ -1,4 +1,4 @@
-const CONTRACT_ADDRESS = '0x4b02d011380a9c2b514a5a656ab240d67bd12bc0'; // Tu contrato RPSGame en Base
+const CONTRACT_ADDRESS = '0xc28E591dc1060066605b8842028a4Bfe70010101'; // Tu contrato RPSGame en Base
 const CONTRACT_ABI = [ // ABI básico de las funciones clave (lo generé de tu .sol, sin extras)
     "function createGame() external payable",
     "function joinGame(uint256 _gameId) external payable",
