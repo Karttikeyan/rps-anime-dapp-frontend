@@ -1,0 +1,72 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: 'Arial', sans-serif;
+    background-image: url('https://w0.peakpx.com/wallpaper/293/818/HD-wallpaper-anime-cyberpunk-city-anime.jpg');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    color: white;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
+}
+
+.container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    text-align: center;
+    background: rgba(0,0,0,0.6);
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(255,0,255,0.5);
+}
+
+h1 {
+    font-size: 2.5em;
+    color: #ff00ff;
+    text-shadow: 0 0 10px #ff00ff;
+}
+
+button {
+    background: linear-gradient(45deg, #ff00ff, #00ffff);
+    border: none;
+    padding: 15px 30px;
+    margin: 10px;
+    border-radius: 50px;
+    color: white;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: box-shadow 0.3s;
+}
+
+button:hover {
+    box-shadow: 0 0 20px #ff00ff;
+}
+
+#choiceSection button {
+    background: transparent;
+    border: 3px solid #ff00ff;
+    margin: 10px;
+    padding: 10px;
+}
+
+#choiceSection button:hover {
+    background: rgba(255,0,255,0.2);
+}
+
+img {
+    border-radius: 50%;
+    box-shadow: 0 0 10px #00ffff;
+}
+
+input {
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #00ffff;
+    background: rgba(0,0,0,0.5);
+    color: white;
+}
+
+#status, #gameInfo, #result {
+    font-size: 1.1em;
+    margin: 20px 0;
+}
