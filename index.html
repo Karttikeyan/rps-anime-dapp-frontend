@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RPS Anime DApp - Piedra Papel Tijeras Crypto</title>
+    <script src="https://cdn.ethers.io/lib/ethers-5.7.umd.min.js" type="application/javascript"></script>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <h1>🗿📄✂️ RPS Anime Battle</h1>
+        <p id="status">Conecta tu wallet para jugar</p>
+        <button id="connectBtn">Conectar MetaMask</button>
+        <div id="gameSection" style="display:none;">
+            <p id="gameInfo">Crea o únete a un juego con 0.001 ETH</p>
+            <button id="createBtn">Crear Juego</button>
+            <p id="joinInfo">O únete al juego ID: <input id="gameIdInput" type="number" value="1"> <button id="joinBtn">Unirse</button></p>
+            <div id="choiceSection" style="display:none;">
+                <h2>Elige tu movimiento:</h2>
+                <button id="rockBtn"><img src="rock.png" alt="Rock" width="100"></button>
+                <button id="paperBtn"><img src="paper.png" alt="Paper" width="100"></button>
+                <button id="scissorsBtn"><img src="scissors.png" alt="Scissors" width="100"></button>
+            </div>
+            <p id="result"></p>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
