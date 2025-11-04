@@ -35,7 +35,7 @@ async function connectWallet() {
         setupButtons();
     } catch (error) {
         console.log('Error conexión:', error);
-        let errorMsg = error.message || error.reason || getRevertReason(error.data);
+        let errorMsg = getRevertReason(error);
         document.getElementById('status').innerText = 'Error al conectar: ' + errorMsg;
     }
 }
@@ -48,13 +48,18 @@ function setupButtons() {
     document.getElementById('scissorsBtn').onclick = () => makeChoice(3); // Scissors = 3
 }
 
-function getRevertReason(data) {
-    if (!data) return 'Error desconocido (chequea consola)';
-    if (data.startsWith('0x08c379a0')) { // Standard revert selector
-        const payload = data.slice(10); // Skip selector
-        return ethers.utils.toUtf8String(payload);
+function getRevertReason(error) {
+    if (!error) return 'Error desconocido';
+    if (error.message) return error.message;
+    if (error.reason) return error.reason;
+    if (error.data) {
+        if (error.data.startsWith('0x08c379a0')) {
+            const payload = error.data.slice(10); // Skip selector 0x08c379a0 (10 chars)
+            return ethers.utils.toUtf8String(payload);
+        }
+        return ethers.utils.toUtf8String(error.data);
     }
-    return data;
+    return 'Error desconocido (chequea consola)';
 }
 
 async function createGame() {
@@ -69,7 +74,7 @@ async function createGame() {
         document.getElementById('joinInfo').style.display = 'none';
     } catch (error) {
         console.log('Error crear:', error);
-        let errorMsg = error.message || error.reason || getRevertReason(error.data);
+        let errorMsg = getRevertReason(error);
         document.getElementById('status').innerText = 'Error al crear: ' + errorMsg;
     }
 }
@@ -89,7 +94,7 @@ async function joinGame() {
         document.getElementById('choiceSection').style.display = 'block';
     } catch (error) {
         console.log('Error unir:', error);
-        let errorMsg = error.message || error.reason || getRevertReason(error.data);
+        let errorMsg = getRevertReason(error);
         document.getElementById('status').innerText = 'Error al unir: ' + errorMsg;
     }
 }
@@ -121,7 +126,7 @@ async function makeChoice(choice) {
         document.getElementById('result').innerText = resultText;
     } catch (error) {
         console.log('Error elegir:', error);
-        let errorMsg = error.message || error.reason || getRevertReason(error.data);
+        let errorMsg = getRevertReason(error);
         document.getElementById('status').innerText = 'Error al elegir: ' + errorMsg;
     }
 }
