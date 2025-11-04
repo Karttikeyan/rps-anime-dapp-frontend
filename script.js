@@ -35,7 +35,7 @@ async function connectWallet() {
         setupButtons();
     } catch (error) {
         console.log('Error conexión:', error);
-        let errorMsg = error.message || error.reason || (error.data ? ethers.utils.toUtf8String(error.data) : 'Error desconocido (chequea consola)');
+        let errorMsg = error.message || error.reason || getRevertReason(error.data);
         document.getElementById('status').innerText = 'Error al conectar: ' + errorMsg;
     }
 }
@@ -46,6 +46,15 @@ function setupButtons() {
     document.getElementById('rockBtn').onclick = () => makeChoice(1); // Rock = 1
     document.getElementById('paperBtn').onclick = () => makeChoice(2); // Paper = 2
     document.getElementById('scissorsBtn').onclick = () => makeChoice(3); // Scissors = 3
+}
+
+function getRevertReason(data) {
+    if (!data) return 'Error desconocido (chequea consola)';
+    if (data.startsWith('0x08c379a0')) { // Standard revert selector
+        const payload = data.slice(10); // Skip selector
+        return ethers.utils.toUtf8String(payload);
+    }
+    return data;
 }
 
 async function createGame() {
@@ -60,7 +69,7 @@ async function createGame() {
         document.getElementById('joinInfo').style.display = 'none';
     } catch (error) {
         console.log('Error crear:', error);
-        let errorMsg = error.message || error.reason || (error.data ? ethers.utils.toUtf8String(error.data) : 'Error desconocido (chequea consola)');
+        let errorMsg = error.message || error.reason || getRevertReason(error.data);
         document.getElementById('status').innerText = 'Error al crear: ' + errorMsg;
     }
 }
@@ -80,7 +89,7 @@ async function joinGame() {
         document.getElementById('choiceSection').style.display = 'block';
     } catch (error) {
         console.log('Error unir:', error);
-        let errorMsg = error.message || error.reason || (error.data ? ethers.utils.toUtf8String(error.data) : 'Error desconocido (chequea consola)');
+        let errorMsg = error.message || error.reason || getRevertReason(error.data);
         document.getElementById('status').innerText = 'Error al unir: ' + errorMsg;
     }
 }
@@ -112,7 +121,7 @@ async function makeChoice(choice) {
         document.getElementById('result').innerText = resultText;
     } catch (error) {
         console.log('Error elegir:', error);
-        let errorMsg = error.message || error.reason || (error.data ? ethers.utils.toUtf8String(error.data) : 'Error desconocido (chequea consola)');
+        let errorMsg = error.message || error.reason || getRevertReason(error.data);
         document.getElementById('status').innerText = 'Error al elegir: ' + errorMsg;
     }
 }
