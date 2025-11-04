@@ -25,7 +25,7 @@ async function connectWallet() {
         contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
         const network = await provider.getNetwork();
         if (network.chainId !== 8453) {
-            alert('Cambia a la red Base en MetaMask');
+            alert('Cambia a la red Base in MetaMask');
             return;
         }
         const address = await signer.getAddress();
@@ -35,7 +35,8 @@ async function connectWallet() {
         setupButtons();
     } catch (error) {
         console.error('Error conexión:', error);
-        alert(error.reason || error.message || 'Error desconocido');
+        const reason = error.reason || error.message || (error.data ? ethers.utils.toUtf8String(error.data.slice(10)) : 'Error desconocido');
+        alert(reason);
     }
 }
 
@@ -59,7 +60,8 @@ async function createGame() {
         document.getElementById('joinInfo').style.display = 'none';
     } catch (error) {
         console.error('Error crear:', error);
-        alert(error.reason || error.message || 'Error desconocido - chequea consola');
+        const reason = error.reason || error.message || (error.data ? ethers.utils.toUtf8String(error.data.slice(10)) : 'Error desconocido');
+        document.getElementById('status').innerText = 'Error al crear: ' + reason;
     }
 }
 
@@ -70,7 +72,7 @@ async function joinGame() {
         alert('Ingresa un ID de juego válido (ej: 1)');
         return;
     }
-    // Pre-check: Verifica si el juego existe (como in depapp)
+    // Pre-check: Verifica si el juego existe (basado in depapp)
     try {
         const game = await contract.games(gameId);
         if (game.player1 === '0x0000000000000000000000000000000000000000') {
@@ -93,7 +95,8 @@ async function joinGame() {
         document.getElementById('choiceSection').style.display = 'block';
     } catch (error) {
         console.error('Error unir:', error);
-        alert(error.reason || error.message || 'Error desconocido - chequea consola');
+        const reason = error.reason || error.message || (error.data ? ethers.utils.toUtf8String(error.data.slice(10)) : 'Error desconocido');
+        document.getElementById('status').innerText = 'Error al unir: ' + reason;
     }
 }
 
@@ -124,7 +127,8 @@ async function makeChoice(choice) {
         document.getElementById('result').innerText = resultText;
     } catch (error) {
         console.error('Error elegir:', error);
-        alert(error.reason || error.message || 'Error desconocido - chequea consola');
+        const reason = error.reason || error.message || (error.data ? ethers.utils.toUtf8String(error.data.slice(10)) : 'Error desconocido');
+        document.getElementById('status').innerText = 'Error al elegir: ' + reason;
     }
 }
 
