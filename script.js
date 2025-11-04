@@ -53,11 +53,23 @@ function getRevertReason(error) {
     if (error.message) return error.message;
     if (error.reason) return error.reason;
     if (error.data) {
-        if (error.data.startsWith('0x08c379a0')) {
-            const payload = error.data.slice(10); // Skip selector 0x08c379a0 (10 chars)
-            return ethers.utils.toUtf8String(payload);
+        let data = error.data;
+        if (data.startsWith('0x08c379a0')) {
+            // Standard revert: selector + offset (0x20) + length + string
+            const offset = '0x' + data.substring(10, 74); // Offset 32 bytes after selector
+            if (offset === '0x0000000000000000000000000000000000000000000000000000000000000020') {
+                const lengthHex = data.substring(74, 82); // First 4 bytes of length field
+                const length = parseInt(lengthHex, 16);
+                const stringStart = 138; // After selector (10) + offset (64) + length (64) = 138 chars
+                const stringHex = data.substring(stringStart, stringStart + length * 2);
+                try {
+                    return ethers.utils.toUtf8String('0x' + stringHex);
+                } catch (e) {
+                    return 'Revert sin motivo legible (chequea consola)';
+                }
+            }
         }
-        return ethers.utils.toUtf8String(error.data);
+        return ethers.utils.toUtf8String(data);
     }
     return 'Error desconocido (chequea consola)';
 }
