@@ -70,7 +70,7 @@ async function joinGame() {
         alert('Ingresa un ID de juego válido (ej: 1)');
         return;
     }
-    // Pre-check: Verifica si el juego existe (como en depapp)
+    // Pre-check: Verifica si el juego existe (como in depapp)
     try {
         const game = await contract.games(gameId);
         if (game.player1 === '0x0000000000000000000000000000000000000000') {
