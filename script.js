@@ -34,7 +34,9 @@ async function connectWallet() {
         document.getElementById('gameSection').style.display = 'block';
         setupButtons();
     } catch (error) {
-        document.getElementById('status').innerText = 'Error al conectar: ' + error.message;
+        console.log('Error conexión:', error);
+        let errorMsg = error.message || error.reason || (error.data ? ethers.utils.toUtf8String(error.data) : 'Error desconocido (chequea consola)');
+        document.getElementById('status').innerText = 'Error al conectar: ' + errorMsg;
     }
 }
 
@@ -57,14 +59,17 @@ async function createGame() {
         document.getElementById('choiceSection').style.display = 'block';
         document.getElementById('joinInfo').style.display = 'none';
     } catch (error) {
-        document.getElementById('status').innerText = 'Error al crear: ' + error.message;
+        console.log('Error crear:', error);
+        let errorMsg = error.message || error.reason || (error.data ? ethers.utils.toUtf8String(error.data) : 'Error desconocido (chequea consola)');
+        document.getElementById('status').innerText = 'Error al crear: ' + errorMsg;
     }
 }
 
 async function joinGame() {
-    const gameId = parseInt(document.getElementById('gameIdInput').value);
-    if (!gameId) {
-        alert('Ingresa un ID de juego válido');
+    const gameIdInput = document.getElementById('gameIdInput').value;
+    const gameId = parseInt(gameIdInput);
+    if (isNaN(gameId) || gameId < 1) {
+        alert('Ingresa un ID de juego válido (ej: 1)');
         return;
     }
     try {
@@ -74,12 +79,22 @@ async function joinGame() {
         document.getElementById('gameInfo').innerText = `¡Unido al juego ${gameId}! Elige tu movimiento.`;
         document.getElementById('choiceSection').style.display = 'block';
     } catch (error) {
-        document.getElementById('status').innerText = 'Error al unir: ' + error.message;
+        console.log('Error unir:', error);
+        let errorMsg = error.message || error.reason || (error.data ? ethers.utils.toUtf8String(error.data) : 'Error desconocido (chequea consola)');
+        document.getElementById('status').innerText = 'Error al unir: ' + errorMsg;
     }
 }
 
 async function makeChoice(choice) {
-    const gameId = parseInt(document.getElementById('gameIdInput').value) || (await contract.gameId() - 1);
+    let gameId = parseInt(document.getElementById('gameIdInput').value);
+    if (isNaN(gameId)) {
+        const currentId = await contract.gameId();
+        gameId = currentId - 1;
+        if (gameId < 1) {
+            document.getElementById('status').innerText = 'No hay juego activo. Crea uno primero.';
+            return;
+        }
+    }
     try {
         const tx = await contract.makeChoice(gameId, choice);
         document.getElementById('status').innerText = 'Enviando elección... Espera (TX: ' + tx.hash + ')';
@@ -96,7 +111,9 @@ async function makeChoice(choice) {
         }
         document.getElementById('result').innerText = resultText;
     } catch (error) {
-        document.getElementById('status').innerText = 'Error al elegir: ' + error.message;
+        console.log('Error elegir:', error);
+        let errorMsg = error.message || error.reason || (error.data ? ethers.utils.toUtf8String(error.data) : 'Error desconocido (chequea consola)');
+        document.getElementById('status').innerText = 'Error al elegir: ' + errorMsg;
     }
 }
 
