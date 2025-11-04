@@ -1,4 +1,4 @@
-const CONTRACT_ADDRESS = '0xc28E591dc1060066605b8842028a4Bfe70010101'; // Tu contrato RPSGame in Base
+const CONTRACT_ADDRESS = '0xc28E591dc1060066605b8842028a4Bfe70010101'; // Tu contrato
 const CONTRACT_ABI = [
     "function createGame() external payable",
     "function joinGame(uint256 _gameId) external payable",
@@ -25,7 +25,7 @@ async function connectWallet() {
         contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, signer);
         const network = await provider.getNetwork();
         if (network.chainId !== 8453) {
-            alert('Cambia a la red Base in MetaMask');
+            alert('Cambia a la red Base en MetaMask');
             return;
         }
         const address = await signer.getAddress();
@@ -34,18 +34,17 @@ async function connectWallet() {
         document.getElementById('gameSection').style.display = 'block';
         setupButtons();
     } catch (error) {
-        console.error('Error conexión:', error);
-        const reason = error.reason || error.message || (error.data ? ethers.utils.toUtf8String(error.data.slice(10)) : 'Error desconocido');
-        alert(reason);
+        console.error(error);
+        alert(error.reason || error.message || 'Error desconocido');
     }
 }
 
 function setupButtons() {
     document.getElementById('createBtn').onclick = createGame;
     document.getElementById('joinBtn').onclick = joinGame;
-    document.getElementById('rockBtn').onclick = () => makeChoice(1); // Rock = 1
-    document.getElementById('paperBtn').onclick = () => makeChoice(2); // Paper = 2
-    document.getElementById('scissorsBtn').onclick = () => makeChoice(3); // Scissors = 3
+    document.getElementById('rockBtn').onclick = () => makeChoice(1);
+    document.getElementById('paperBtn').onclick = () => makeChoice(2);
+    document.getElementById('scissorsBtn').onclick = () => makeChoice(3);
 }
 
 async function createGame() {
@@ -59,77 +58,53 @@ async function createGame() {
         document.getElementById('choiceSection').style.display = 'block';
         document.getElementById('joinInfo').style.display = 'none';
     } catch (error) {
-        console.error('Error crear:', error);
-        const reason = error.reason || error.message || (error.data ? ethers.utils.toUtf8String(error.data.slice(10)) : 'Error desconocido');
-        document.getElementById('status').innerText = 'Error al crear: ' + reason;
+        console.error(error);
+        alert(error.reason || error.message || 'Error desconocido');
     }
 }
 
 async function joinGame() {
-    const gameIdInput = document.getElementById('gameIdInput').value;
-    const gameId = parseInt(gameIdInput);
+    const gameId = parseInt(document.getElementById('gameIdInput').value);
     if (isNaN(gameId) || gameId < 1) {
-        alert('Ingresa un ID de juego válido (ej: 1)');
-        return;
-    }
-    // Pre-check: Verifica si el juego existe (basado in depapp)
-    try {
-        const game = await contract.games(gameId);
-        if (game.player1 === '0x0000000000000000000000000000000000000000') {
-            alert('Juego no existe. Crea uno primero.');
-            return;
-        }
-        if (game.choice1 === 0) {
-            alert('El jugador 1 debe elegir primero.');
-            return;
-        }
-    } catch (e) {
-        alert('Juego no existe. Crea uno primero.');
+        alert('Ingresa un ID válido (ej: 1)');
         return;
     }
     try {
         const tx = await contract.joinGame(gameId, { value: ethers.utils.parseEther('0.00001') });
-        document.getElementById('status').innerText = 'Uniendo al juego... Espera (TX: ' + tx.hash + ')';
+        document.getElementById('status').innerText = 'Uniendo... Espera (TX: ' + tx.hash + ')';
         await tx.wait();
-        document.getElementById('gameInfo').innerText = `¡Unido al juego ${gameId}! Elige tu movimiento.`;
+        document.getElementById('gameInfo').innerText = `¡Unido al ID ${gameId}! Elige tu movimiento.`;
         document.getElementById('choiceSection').style.display = 'block';
     } catch (error) {
-        console.error('Error unir:', error);
-        const reason = error.reason || error.message || (error.data ? ethers.utils.toUtf8String(error.data.slice(10)) : 'Error desconocido');
-        document.getElementById('status').innerText = 'Error al unir: ' + reason;
+        console.error(error);
+        alert(error.reason || error.message || 'Error desconocido');
     }
 }
 
 async function makeChoice(choice) {
-    let gameId = parseInt(document.getElementById('gameIdInput').value);
-    if (isNaN(gameId)) {
-        const currentId = await contract.gameId();
-        gameId = currentId - 1;
-        if (gameId < 1) {
-            alert('No hay juego activo. Crea uno primero.');
-            return;
-        }
+    const gameId = parseInt(document.getElementById('gameIdInput').value) || (await contract.gameId() - 1);
+    if (gameId < 1) {
+        alert('No hay juego. Crea uno primero.');
+        return;
     }
     try {
         const tx = await contract.makeChoice(gameId, choice);
         document.getElementById('status').innerText = 'Enviando elección... Espera (TX: ' + tx.hash + ')';
         await tx.wait();
-        // Lee el juego para mostrar resultado
         const game = await contract.games(gameId);
         const choices = ['Ninguno', 'Piedra', 'Papel', 'Tijeras'];
         const results = ['Pendiente', 'Ganas', 'Pierdes', 'Empate'];
-        let resultText = `Tu elección: ${choices[choice]}. Juego ID ${gameId}: P1: ${choices[game.choice1]}, P2: ${choices[game.choice2]}. `;
+        let text = `Tu elección: ${choices[choice]}. P1: ${choices[game.choice1]}, P2: ${choices[game.choice2]}. `;
         if (game.resolved) {
-            resultText += `¡Resultado: ${results[game.result]}!`;
+            text += `¡Resultado: ${results[game.result]}!`;
         } else {
-            resultText += 'Esperando elección del oponente...';
+            text += 'Esperando oponente...';
         }
-        document.getElementById('result').innerText = resultText;
+        document.getElementById('result').innerText = text;
     } catch (error) {
-        console.error('Error elegir:', error);
-        const reason = error.reason || error.message || (error.data ? ethers.utils.toUtf8String(error.data.slice(10)) : 'Error desconocido');
-        document.getElementById('status').innerText = 'Error al elegir: ' + reason;
+        console.error(error);
+        alert(error.reason || error.message || 'Error desconocido');
     }
 }
 
-init(); // Inicia cuando carga la página
+init();
