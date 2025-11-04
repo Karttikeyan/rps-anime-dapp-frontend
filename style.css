@@ -3,8 +3,8 @@ body {
     padding: 0;
     font-family: 'Arial', sans-serif;
     background: linear-gradient(45deg, #ff00ff, #00ffff, #000000);
-    background-size: 400% 400%;
-    animation: gradientShift 15s ease infinite;
+    background-size: cover;
+    background-position: center;
     color: white;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
 }
@@ -63,16 +63,11 @@ input {
     border: 1px solid #00ffff;
     background: rgba(0,0,0,0.5);
     color: white;
+    -webkit-appearance: none; /* Fix pseudo-spinner warning */
+    -moz-appearance: textfield; /* Firefox fix */
 }
 
 #status, #gameInfo, #result {
     font-size: 1.1em;
     margin: 20px 0;
-}
-
-@keyframes gradientShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-}
 }
