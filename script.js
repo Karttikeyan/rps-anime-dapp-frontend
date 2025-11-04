@@ -50,17 +50,18 @@ function setupButtons() {
 
 function getRevertReason(error) {
     if (!error) return 'Error desconocido';
-    if (error.message) return error.message;
     if (error.reason) return error.reason;
+    if (error.message) return error.message;
     if (error.data) {
         let data = error.data;
         if (data.startsWith('0x08c379a0')) {
-            // Standard revert: selector + offset (0x20) + length + string
-            const offset = '0x' + data.substring(10, 74); // Offset 32 bytes after selector
-            if (offset === '0x0000000000000000000000000000000000000000000000000000000000000020') {
-                const lengthHex = data.substring(74, 82); // First 4 bytes of length field
+            // Standard revert: selector + offset (0x20) + length + string padded
+            const offsetHex = data.substring(10, 74); // Bytes 4-35: offset
+            const offset = parseInt(offsetHex, 16);
+            if (offset === 32) { // Standard offset 0x20
+                const lengthHex = data.substring(74, 82); // Bytes 36-39: length
                 const length = parseInt(lengthHex, 16);
-                const stringStart = 138; // After selector (10) + offset (64) + length (64) = 138 chars
+                const stringStart = 138; // Selector 10 chars + offset 64 chars + length 64 chars = 138
                 const stringHex = data.substring(stringStart, stringStart + length * 2);
                 try {
                     return ethers.utils.toUtf8String('0x' + stringHex);
