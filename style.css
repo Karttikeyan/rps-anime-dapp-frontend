@@ -2,10 +2,9 @@ body {
     margin: 0;
     padding: 0;
     font-family: 'Arial', sans-serif;
-    background-image: url('https://cdn.pixabay.com/photo/2017/08/07/14/02/cyberpunk-2604864_1280.jpg');
-    background-size: cover;
-    background-position: center;
-    background-attachment: fixed;
+    background: linear-gradient(45deg, #ff00ff, #00ffff, #000000);
+    background-size: 400% 400%;
+    animation: gradientShift 15s ease infinite;
     color: white;
     text-shadow: 2px 2px 4px rgba(0,0,0,0.8);
 }
@@ -69,4 +68,11 @@ input {
 #status, #gameInfo, #result {
     font-size: 1.1em;
     margin: 20px 0;
+}
+
+@keyframes gradientShift {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
 }
