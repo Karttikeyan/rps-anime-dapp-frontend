@@ -48,7 +48,7 @@ function setupButtons() {
 
 async function createGame() {
     try {
-        const tx = await contract.createGame({ value: ethers.utils.parseEther('0.001') });
+        const tx = await contract.createGame({ value: ethers.utils.parseEther('0.00001') });
         document.getElementById('status').innerText = 'Creando juego... Espera (TX: ' + tx.hash + ')';
         await tx.wait();
         const newId = await contract.gameId();
@@ -68,7 +68,7 @@ async function joinGame() {
         return;
     }
     try {
-        const tx = await contract.joinGame(gameId, { value: ethers.utils.parseEther('0.001') });
+        const tx = await contract.joinGame(gameId, { value: ethers.utils.parseEther('0.00001') });
         document.getElementById('status').innerText = 'Uniendo al juego... Espera (TX: ' + tx.hash + ')';
         await tx.wait();
         document.getElementById('gameInfo').innerText = `¡Unido al juego ${gameId}! Elige tu movimiento.`;
